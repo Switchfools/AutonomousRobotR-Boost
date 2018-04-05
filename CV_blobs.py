@@ -15,9 +15,10 @@ params.filterByArea = False
 detector = cv2.SimpleBlobDetector_create(params)
 
 # Color a buscar
+ColorSoldado = (143, 93, 214) #BGR
 Color1 = (80, 232, 205) #BGR
 Color2 = (113, 171, 246) #BGR
-ColorSoldado = (143, 93, 214) #BGR
+
 
 
 while(True):
@@ -56,25 +57,50 @@ while(True):
 	im_with_keypoints = cv2.drawKeypoints(im, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 	 
 	# Muestra
-	cv2.imshow("imagenfinal.jpg",im_with_keypoints)
+	cv2.imshow("Imagen filtrada",im_with_keypoints)
 	cv2.waitKey(1)
 
 	# Analisis de los Keypoints
 
-	print("Se encontraron ", len(keypoints), " blobs")
+	print("Se encontraron", len(keypoints), "blobs")
 
 	if(len(keypoints)==3):
 
-		x1 = int(keypoints[0].pt[1])
-		y1 = int(keypoints[0].pt[0])
+		DistanciaSoldado = 9999
+		Distancia1 = 9999
+		Distancia2 = 9999
 
-		x2 = int(keypoints[1].pt[1])
-		y2 = int(keypoints[1].pt[0])
+		XSoldado = 0
+		YSoldado = 0
 
-		x3 = int(keypoints[2].pt[1])
-		y3 = int(keypoints[2].pt[0])
+		X1 = 0
+		Y1 = 0
 
-		print("X1:",x1,"Y1:",y1,"X2:",x2,"Y2:",y2,"X3:",x3,"Y3:",y3)
+		X2 = 0
+		Y2 = 0
+
+		for key in keypoints:
+
+			ColorActualAlSoldado = np.linalg.norm( imOriginal[int(keypoints[0].pt[1]), int(keypoints[0].pt[0])] - ColorSoldado )
+			ColorActualAl1 = np.linalg.norm( imOriginal[int(keypoints[0].pt[1]), int(keypoints[0].pt[0])] - Color1 )
+			ColorActualAl2 = np.linalg.norm( imOriginal[int(keypoints[0].pt[1]), int(keypoints[0].pt[0])] - Color2 )
+
+			if ColorActualAlSoldado < DistanciaSoldado:
+				DistanciaSoldado = ColorActualAlSoldado
+				XSoldado = keypoints[0].pt[0]
+				YSoldado = keypoints[0].pt[1]
+
+			if ColorActualAl1 < Distancia1:
+				Distancia1 = ColorActualAl1
+				X1 = keypoints[0].pt[0]
+				Y1 = keypoints[0].pt[1]
+
+			if ColorActualAl2 < Distancia2:
+				Distancia2 = ColorActualAl2
+				X2 = keypoints[0].pt[0]
+				Y2 = keypoints[0].pt[1]
+
+		print("X_Soldado:",XSoldado,"Y_Soldado:",YSoldado,"X1:",X1,"Y1:",Y1,"X2:",X2,"Y2:",Y2)
 
 	e2 = cv2.getTickCount()
 	t = (e2 - e1)/cv2.getTickFrequency()
