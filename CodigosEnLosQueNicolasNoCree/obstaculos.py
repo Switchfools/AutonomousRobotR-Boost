@@ -62,13 +62,38 @@ def Voro():
     plt.plot(NNN[:,0], NNN[:, 1], 'ko', ms=4)
     plt.savefig('realpath.png')
     lena,lenb=np.shape(vor.vertices)
-    MAdyacencia=np.zeros([lena,lena])
+    MAdyacencia=np.zeros([lena+2,lena+2],dtype=int)
     for i in range(len(ConNodos)):
         A,B=ConNodos[i]
         MAdyacencia[A,B]=1
         MAdyacencia[B,A]=1
-    return(MAdyacencia,vor.vertices)
+    inicio=[40,40]
+    final=[M-100,N-300]
+    bestlenIn=10000
+    bestlenEnd=10000
+    for i in range(len(Nodos)):
+        x,y=Nodos[i]
+        reallenIn=np.sqrt((x-inicio[0])**2+(y-inicio[1])**2)
+        reallenEnd=np.sqrt((x-final[0])**2+(y-final[1])**2)
+        if(reallenIn<bestlenIn):
+            bestlenIn=reallenIn
+            posIn=Nodos[i]
+        if(reallenEnd<bestlenEnd):
+            bestlenEnd=reallenEnd
+            posEnd=Nodos[i]
+    for i in range(len(vor.vertices)):
+        x,y=vor.vertices[i]
+        if(posIn[0]==x and posIn[1]==y):
+            MAdyacencia[0,i]=1
+        if(posEnd[0]==x and posEnd[1]==y):
+            MAdyacencia[i,0]=1
+    Vertices=list([inicio])
+    Vertices.append(vor.vertices)
+    Vertices.append(final)
+    V=np.array(Vertices)
+    return(MAdyacencia,V)
     #plt.figure()
     #plt.scatter(vor.ridge_vertices[:,0],vor.ridge_vertices[:,1])
     #plt.show()
     imageio.imwrite('obstaculos.png',Obstaculos)
+
