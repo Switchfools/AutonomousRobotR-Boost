@@ -87,13 +87,20 @@ def Voro():
             MAdyacencia[0,i]=1
         if(posEnd[0]==x and posEnd[1]==y):
             MAdyacencia[i,0]=1
-    Vertices=list([inicio])
-    Vertices.append(vor.vertices)
-    Vertices.append(final)
-    V=np.array(Vertices)
-    return(MAdyacencia,V)
+    Vertices=np.zeros([lena+2,2])
+    for i in range(lena+2):
+        if(i==0):
+            Vertices[i,0]=inicio[0]
+            Vertices[i,1]=inicio[1]
+        elif(i!=0 and i!=lena+2):
+            Vertices[i,0]=vor.vertices[i-2,0]
+            Vertices[i,1]=vor.vertices[i-2,1]
+        else:
+            Vertices[i,0]=final[0]
+            Vertices[i,1]=final[1]
+    return(MAdyacencia,Vertices)
     #plt.figure()
     #plt.scatter(vor.ridge_vertices[:,0],vor.ridge_vertices[:,1])
     #plt.show()
     imageio.imwrite('obstaculos.png',Obstaculos)
-
+Voro()
